@@ -1,0 +1,22 @@
+{
+  "name": "sopatizador",
+  "version": "0.0.1",
+  "description": "sopa de letras",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rojasarmando/sopatizador-package.git"
+  },
+  "keywords": [
+    "sopatizador"
+  ],
+  "author": "Armando Rojas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rojasarmando/sopatizador-package/issues"
+  },
+  "homepage": "https://github.com/rojasarmando/sopatizador-package#readme"
+}
