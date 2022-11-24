@@ -1,6 +1,6 @@
 {
   "name": "sopatizador",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "sopa de letras",
   "main": "index.js",
   "scripts": {
