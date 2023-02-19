@@ -4,6 +4,12 @@
 */
 
 export class Sopatizador {
+  abc: any[];
+  availability: any[];
+  position: any[];
+  alphabet_soup: any[];
+  private n: number;
+  private m: number;
   // inicializa el array del ABC
   constructor(m = 12, n = 12) {
     this.abc = [];
@@ -17,9 +23,9 @@ export class Sopatizador {
     this.n = n;
     this.m = m;
 
-    this.initAbc();
+    this._initAbc();
 
-    this.initTable(m, n);
+    this._initTable(m, n);
   }
 
   // devuelve la sopa de letras
@@ -29,7 +35,7 @@ export class Sopatizador {
 
   // agregar una palabra a la sopa de letras
 
-  addalphabet_soup(text) {
+  addalphabet_soup(text: string) {
     let control = false;
 
     while (!control) {
@@ -44,15 +50,15 @@ export class Sopatizador {
   }
 
   // genera un objecto de positions para ser usados posteriormente
-  generatorOfPositions(size) {
+  generatorOfPositions(size: number) {
     let control = false;
     let positions = [];
 
     while (!control) {
-      let orientacion = this.random(1, 8);
+      let orientacion = this._random(1, 8);
 
-      let posX = this.random(0, this.n - 1);
-      let posY = this.random(0, this.m - 1);
+      let posX = this._random(0, this.n - 1);
+      let posY = this._random(0, this.m - 1);
 
       positions[0] = { x: posX, y: posY };
 
@@ -114,7 +120,7 @@ export class Sopatizador {
   }
 
   //asignar espacion dentro del array dispònibilidad y dentro de el array tabla
-  assignSpace(text, positions) {
+  assignSpace(text: string, positions: string | any[]) {
     for (let i = 0; i < positions.length; i++) {
       // obtener puntos x & y
       let x = positions[i].x;
@@ -129,8 +135,8 @@ export class Sopatizador {
   }
 
   //verifica si se encuentra disponible el espacio en la matriz
-  verifyAvailability(positions) {
-    let control = true;
+  verifyAvailability(positions: any[]): boolean {
+    let control: boolean = true;
 
     for (let i = 0; i < positions.length; i++) {
       let x = positions[i].x;
@@ -145,8 +151,8 @@ export class Sopatizador {
   //obtener un array bidimencional de letras al azar
   // m es el numero de columnas
   // n el numero de filas
-  initTable(m, n) {
-    let array = [];
+  private _initTable(m: number, n: number) {
+    let array: any = [];
 
     for (let i = 0; i < m; i++) {
       array[i] = [];
@@ -162,22 +168,22 @@ export class Sopatizador {
   }
 
   //obtener una letra del ABC aleatoriamente
-  getLetter() {
-    return this.abc[this.random(0, 24)];
+  getLetter(): String {
+    return this.abc[this._random(0, 24)];
   }
 
   // funcion para obtener numeros aleatorios
-  random(inferior, superior) {
+  private _random(inferior: number, superior: number): number {
     let numPosibilidades = superior - inferior;
 
     let aleat = Math.random() * numPosibilidades;
     aleat = Math.round(aleat);
 
-    return parseInt(inferior) + aleat;
+    return inferior + aleat;
   }
 
   //funcion para obtener el abc en un array
-  initAbc() {
+  private _initAbc() {
     let i = 0;
 
     this.abc[i] = 'A';
