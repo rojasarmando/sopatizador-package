@@ -2,7 +2,7 @@ export class Sopatizador {
   abc: any[];
   availability: any[];
   position: any[];
-  alphabet_soup: any[];
+  Alphabet_soup: any[];
   private n: number;
   private m: number;
   // inicializa el array del ABC
@@ -13,7 +13,7 @@ export class Sopatizador {
     this.availability = [];
     this.position = [];
 
-    this.alphabet_soup = [];
+    this.Alphabet_soup = [];
 
     this.n = n;
     this.m = m;
@@ -25,7 +25,7 @@ export class Sopatizador {
 
   // devuelve la sopa de letras
   getalphabet_soup() {
-    return this.alphabet_soup;
+    return this.Alphabet_soup;
   }
 
   // agregar una palabra a la sopa de letras
@@ -34,7 +34,7 @@ export class Sopatizador {
     let control = false;
 
     while (!control) {
-      let position = this.generatorOfPositions(text.length);
+      const position = this.generatorOfPositions(text.length);
 
       if (this.verifyAvailability(position)) {
         control = true;
@@ -46,8 +46,8 @@ export class Sopatizador {
 
   // genera un objecto de positions para ser usados posteriormente
   generatorOfPositions(size: number) {
-    let control = false;
-    let positions = [];
+    let control: boolean = false;
+    let positions: any = [];
 
     while (!control) {
       let orientacion = this._random(1, 8);
@@ -61,7 +61,6 @@ export class Sopatizador {
         switch (orientacion) {
           case 1: // horizontal hacia la derecha
             positions[i] = { x: ++posX, y: posY };
-
             break; //case 1
 
           case 2: // horizontal hacia la izquierda
@@ -159,7 +158,7 @@ export class Sopatizador {
       }
     }
 
-    this.alphabet_soup = array;
+    this.Alphabet_soup = array;
   }
 
   //obtener una letra del ABC aleatoriamente
