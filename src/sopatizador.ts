@@ -1,8 +1,3 @@
-/**
-@author Armando Rojas <armando.develop@gmail.com>
-@github rojasarmando
-*/
-
 export class Sopatizador {
   abc: any[];
   availability: any[];

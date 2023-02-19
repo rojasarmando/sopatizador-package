@@ -1,1 +1,4 @@
 # Sopatizador
+
+
+``` npm version patch  ```
