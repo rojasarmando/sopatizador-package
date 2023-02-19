@@ -1,6 +1,6 @@
 {
   "name": "sopatizador",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "sopa de letras",
   "main": "lib/sopatizador.js",
   "types": "lib/sopatizador.d.ts",
