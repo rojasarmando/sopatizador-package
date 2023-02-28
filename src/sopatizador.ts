@@ -24,13 +24,13 @@ export class Sopatizador {
   }
 
   // devuelve la sopa de letras
-  getalphabet_soup() {
+  getAlphabet_soup() {
     return this.Alphabet_soup;
   }
 
   // agregar una palabra a la sopa de letras
 
-  addalphabet_soup(text: string) {
+  addAlphabet_soup(text: string) {
     let control = false;
 
     while (!control) {
@@ -124,7 +124,7 @@ export class Sopatizador {
       this.availability[y][x] = false;
 
       // asignar la letra de la palabra
-      this.alphabet_soup[y][x] = { text: text[i], decorar: true };
+      this.Alphabet_soup[y][x] = { text: text[i], decorate: true };
     }
   }
 
@@ -153,7 +153,7 @@ export class Sopatizador {
       this.availability[i] = [];
 
       for (let k = 0; k < n; k++) {
-        array[i][k] = { text: this.getLetter(), decorar: false };
+        array[i][k] = { text: this.getLetter(), decorate: false };
         this.availability[i][k] = true;
       }
     }
