@@ -1,211 +1,118 @@
+import { Cell } from "./types/cell";
+import { Position } from "./types/position";
+
 export class Sopatizador {
-  abc: any[];
-  availability: any[];
-  position: any[];
-  Alphabet_soup: any[];
-  private n: number;
-  private m: number;
-  // inicializa el array del ABC
-  constructor(m = 12, n = 12) {
-    this.abc = [];
+  private readonly abc: string[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
+  private alphabetSoup: Cell[][];
+  private readonly width: number;
+  private readonly height: number;
 
-    // disponibilidad de positions en la tabla
-    this.availability = [];
-    this.position = [];
-
-    this.Alphabet_soup = [];
-
-    this.n = n;
-    this.m = m;
-
-    this._initAbc();
-
-    this._initTable(m, n);
+  constructor(width = 12, height = 12) {
+    this.width = width;
+    this.height = height;
+    this.alphabetSoup = [];
+    
+    this.initializeAlphabetSoup();
   }
 
-  // devuelve la sopa de letras
-  getAlphabet_soup() {
-    return this.Alphabet_soup;
+  getAlphabetSoup(): Cell[][] {
+    return this.alphabetSoup;
   }
 
-  // agregar una palabra a la sopa de letras
+  addWord(word: string): void {
+    const upperWord = word.toUpperCase();
+    let attempts = 0;
+    const maxAttempts = 100;
 
-  addAlphabet_soup(text: string) {
-    let control = false;
-
-    while (!control) {
-      const position = this.generatorOfPositions(text.length);
-
-      if (this.verifyAvailability(position)) {
-        control = true;
-
-        this.assignSpace(text, position);
+    while (attempts < maxAttempts) {
+      const positions = this.generatePositions(upperWord.length);
+      
+      if (this.canPlaceWord(upperWord, positions)) {
+        this.placeWord(upperWord, positions);
+        return;
       }
+      
+      attempts++;
     }
+
+    throw new Error(`No se pudo colocar la palabra "${word}" después de ${maxAttempts} intentos`);
   }
 
-  // genera un objecto de positions para ser usados posteriormente
-  generatorOfPositions(size: number) {
-    let control: boolean = false;
-    let positions: any = [];
+  public generatePositions(size: number): Position[] {
+    const directions = [
+      (x: number, y: number, i: number) => ({ x: x + i, y }),      // Derecha
+      (x: number, y: number, i: number) => ({ x: x - i, y }),      // Izquierda
+      (x: number, y: number, i: number) => ({ x, y: y + i }),      // Abajo
+      (x: number, y: number, i: number) => ({ x, y: y - i }),      // Arriba
+      (x: number, y: number, i: number) => ({ x: x + i, y: y + i }), // Diagonal inferior derecha
+      (x: number, y: number, i: number) => ({ x: x - i, y: y - i }), // Diagonal superior izquierda
+      (x: number, y: number, i: number) => ({ x: x + i, y: y - i }), // Diagonal superior derecha
+      (x: number, y: number, i: number) => ({ x: x - i, y: y + i })  // Diagonal inferior izquierda
+    ];
 
-    while (!control) {
-      let orientacion = this._random(1, 8);
+    let positions: Position[] = [];
+    let isValid = false;
 
-      let posX = this._random(0, this.n - 1);
-      let posY = this._random(0, this.m - 1);
+    while (!isValid) {
+      const startX = this.getRandomInt(0, this.width - 1);
+      const startY = this.getRandomInt(0, this.height - 1);
+      const direction = this.getRandomInt(0, directions.length - 1);
 
-      positions[0] = { x: posX, y: posY };
+      positions = Array.from({ length: size }, (_, i) => 
+        directions[direction](startX, startY, i)
+      );
 
-      for (let i = 1; i < size; i++) {
-        switch (orientacion) {
-          case 1: // horizontal hacia la derecha
-            positions[i] = { x: ++posX, y: posY };
-            break; //case 1
-
-          case 2: // horizontal hacia la izquierda
-            positions[i] = { x: --posX, y: posY };
-
-            break; //case 2
-
-          case 3: // vertical hacia arriba
-            positions[i] = { x: posX, y: ++posY };
-
-            break; //case 3
-
-          case 4: // vertical hacia arriba
-            positions[i] = { x: posX, y: --posY };
-
-            break; //case 4
-
-          case 5: // diagonal descendente hacia la derecha
-            positions[i] = { x: ++posX, y: ++posY };
-
-            break;
-
-          case 6: // diagonal ascendente hacia la izquierda
-            positions[i] = { x: --posX, y: --posY };
-
-            break;
-
-          case 7: // diagonal descendente hacia la izquierda
-            positions[i] = { x: ++posX, y: --posY };
-
-            break;
-
-          case 8: // diagonal ascendente hacia la derecha
-            positions[i] = { x: --posX, y: ++posY };
-
-            break;
-        } //switch
-      } //for
-
-      if (
-        positions[positions.length - 1].y < this.m &&
-        positions[positions.length - 1].x < this.n &&
-        positions[positions.length - 1].y > -1 &&
-        positions[positions.length - 1].x > -1
-      ) {
-        control = true;
-      } // if
-    } // while
+      // Verificar que todas las posiciones estén dentro de los límites
+      isValid = positions.every(pos => 
+        pos.x >= 0 && pos.x < this.width && 
+        pos.y >= 0 && pos.y < this.height
+      );
+    }
 
     return positions;
   }
 
-  //asignar espacion dentro del array dispònibilidad y dentro de el array tabla
-  assignSpace(text: string, positions: string | any[]) {
+  private canPlaceWord(word: string, positions: Position[]): boolean {
     for (let i = 0; i < positions.length; i++) {
-      // obtener puntos x & y
-      let x = positions[i].x;
-      let y = positions[i].y;
-
-      // quitar disponibilidad al espacio
-      this.availability[y][x] = false;
-
-      // asignar la letra de la palabra
-      this.Alphabet_soup[y][x] = { text: text[i], decorate: true };
-    }
-  }
-
-  //verifica si se encuentra disponible el espacio en la matriz
-  verifyAvailability(positions: any[]): boolean {
-    let control: boolean = true;
-
-    for (let i = 0; i < positions.length; i++) {
-      let x = positions[i].x;
-      let y = positions[i].y;
-
-      if (!this.availability[y][x]) control = false;
-    }
-
-    return control;
-  }
-
-  //obtener un array bidimencional de letras al azar
-  // m es el numero de columnas
-  // n el numero de filas
-  private _initTable(m: number, n: number) {
-    let array: any = [];
-
-    for (let i = 0; i < m; i++) {
-      array[i] = [];
-      this.availability[i] = [];
-
-      for (let k = 0; k < n; k++) {
-        array[i][k] = { text: this.getLetter(), decorate: false };
-        this.availability[i][k] = true;
+      const { x, y } = positions[i];
+      const cell = this.alphabetSoup[y][x];
+      
+      // Si la celda ya tiene una letra y no coincide con la palabra actual
+      if (cell.decorate && cell.text !== word[i]) {
+        return false;
       }
     }
-
-    this.Alphabet_soup = array;
+    return true;
   }
 
-  //obtener una letra del ABC aleatoriamente
-  getLetter(): String {
-    return this.abc[this._random(0, 24)];
+  private placeWord(word: string, positions: Position[]): void {
+    for (let i = 0; i < positions.length; i++) {
+      const { x, y } = positions[i];
+      this.alphabetSoup[y][x] = { 
+        text: word[i], 
+        decorate: true 
+      };
+    }
   }
 
-  // funcion para obtener numeros aleatorios
-  private _random(inferior: number, superior: number): number {
-    let numPosibilidades = superior - inferior;
-
-    let aleat = Math.random() * numPosibilidades;
-    aleat = Math.round(aleat);
-
-    return inferior + aleat;
+  private initializeAlphabetSoup(): void {
+    for (let y = 0; y < this.height; y++) {
+      this.alphabetSoup[y] = [];
+      
+      for (let x = 0; x < this.width; x++) {
+        this.alphabetSoup[y][x] = { 
+          text: this.getRandomLetter(), 
+          decorate: false 
+        };
+      }
+    }
   }
 
-  //funcion para obtener el abc en un array
-  private _initAbc() {
-    let i = 0;
+  private getRandomLetter(): string {
+    return this.abc[this.getRandomInt(0, this.abc.length - 1)];
+  }
 
-    this.abc[i] = 'A';
-    this.abc[++i] = 'B';
-    this.abc[++i] = 'C';
-    this.abc[++i] = 'D';
-    this.abc[++i] = 'E';
-    this.abc[++i] = 'F';
-    this.abc[++i] = 'G';
-    this.abc[++i] = 'H';
-    this.abc[++i] = 'I';
-    this.abc[++i] = 'J';
-    this.abc[++i] = 'K';
-    this.abc[++i] = 'L';
-    this.abc[++i] = 'M';
-    this.abc[++i] = 'N';
-    this.abc[++i] = 'Ñ';
-    this.abc[++i] = 'O';
-    this.abc[++i] = 'P';
-    this.abc[++i] = 'Q';
-    this.abc[++i] = 'R';
-    this.abc[++i] = 'S';
-    this.abc[++i] = 'T';
-    this.abc[++i] = 'U';
-    this.abc[++i] = 'V';
-    this.abc[++i] = 'W';
-    this.abc[++i] = 'X';
-    this.abc[++i] = 'Y';
-    this.abc[++i] = 'Z';
+  private getRandomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }
